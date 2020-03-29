@@ -4,33 +4,40 @@ from settings import *
 import logging
 
 
-updr = Updater(token=BOT_TOKEN, use_context=True)
-disp = updr.dispatcher
+updater = Updater(token=BOT_TOKEN, use_context=True)
+disp = updater.dispatcher
 
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-def start(upd, ctxt):
-    ctxt.bot.send_message(chat_id=upd.effective_chat.id, text="hello, gays")
+
+def start(upd, context):
+    context.bot.send_message(chat_id=upd.effective_chat.id, text="hello, gays")
+
 
 start_handler = CommandHandler('start', start)
 disp.add_handler(start_handler)
 
-updr.start_polling()
+updater.start_polling()
 
-def echo(upd, ctxt):
-    ctxt.bot.send_message(chat_id=upd.effective_chat.id, text=upd.message.text)
+
+def echo(upd, context):
+    context.bot.send_message(chat_id=upd.effective_chat.id, text=upd.message.text)
+
 
 echo_handler = MessageHandler(Filters.text, echo)
 disp.add_handler(echo_handler)
 
-def caps(upd, ctxt):
-    text_caps = ' '.join(ctxt.args).upper()
-    ctxt.bot.send_message(chat_id=upd.effective_chat.id, text=text_caps)
+
+def caps(upd, context):
+    text_caps = ' '.join(context.args).upper()
+    context.bot.send_message(chat_id=upd.effective_chat.id, text=text_caps)
+
 
 caps_handler = CommandHandler('caps', caps)
 disp.add_handler(caps_handler)
 
-def inline_caps(upd, ctxt):
+
+def inline_caps(upd, context):
     query = upd.inline_query.query
     if not query:
         return
@@ -42,7 +49,16 @@ def inline_caps(upd, ctxt):
             input_message_content=InputTextMessageContent(query.upper())
         )
     )
-    ctxt.bot.answer_inline_query(upd.inline_query.id, results)
+    context.bot.answer_inline_query(upd.inline_query.id, results)
+
 
 inline_caps_handler = InlineQueryHandler(inline_caps)
 disp.add_handler(inline_caps_handler)
+
+
+def unknown(upd, context):
+    context.bot.send_message(chat_id=upd.effective_chat.id, text='sry')
+
+
+unknown_handler = MessageHandler(Filters.command, unknown)
+disp.add_handler(unknown_handler)
